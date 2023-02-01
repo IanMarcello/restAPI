@@ -1,2 +1,2 @@
-# restAPI
-Simple RESTful API 
+# simpleAPI
+Created a simple PHP based API from scratch 
