@@ -7,14 +7,25 @@ spl_autoload_register(function ($class) {
 });
 
 set_exception_handler("ErrorHandler::handleException");
+set_error_handler("ErrorHandler::handleError");
 
+header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept, Authorization");
+header("Access-Control-Allow-Credentials: true");
 header("Content-Type: application/json; charset=UTF-8");
 
-// $method = $_SERVER['REQUEST_METHOD'];
+$method = $_SERVER["REQUEST_METHOD"];
 
-$parts = explode("/", $_SERVER['REQUEST_URI']);
+if ($method == "OPTIONS") {
+    header("Access-Control-Allow-Origin: http://localhost:5173");
+    header("Access-Control-Allow-Headers: X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Request-Method,Access-Control-Request-Headers, Authorization");
+    header("HTTP/1.1 200 OK");
+    die();
+}
 
-if($parts[1] != "trial") {
+$parts = explode("/", $_SERVER["REQUEST_URI"]);
+
+if ($parts[1] != "api") {
     http_response_code(404);
     exit;
 }
@@ -27,12 +38,4 @@ $gateway = new TrialGateway($database);
 
 $controller = new TrialController($gateway);
 
-$controller->processRequest($_SERVER['REQUEST_METHOD'], $id);
-
-//  if ($method == 'GET') {
-//      echo "THIS IS A GET REQUEST<br/>";
-//  }
-//  if ($method == 'POST') {
-//      echo "THIS IS A POST REQUEST<br/>";
-//  }
-
+$controller->processRequest($_SERVER["REQUEST_METHOD"], $id);
